@@ -1,0 +1,32 @@
+{
+  "entities": {
+    "lead": {
+      "title": "Lead",
+      "description": "Lead and song customization request from a user",
+      "type": "object",
+      "properties": {
+        "targetName": { "type": "string", "description": "Name of the person receiving the song" },
+        "relationship": { "type": "string", "description": "Relationship with the recipient" },
+        "qualities": { "type": "string", "description": "Recipient's positive qualities and traits" },
+        "unforgettableMoments": { "type": "string", "description": "Memorable moments shared together" },
+        "specialMessage": { "type": "string", "description": "Optional direct special message to include" },
+        "occasion": { "type": "string", "description": "Occasion of the song" },
+        "genre": { "type": "string", "description": "Musical genre chosen" },
+        "voiceType": { "type": "string", "description": "Type of voice chosen" },
+        "planId": { "type": "string", "description": "Selected plan id" },
+        "clientName": { "type": "string", "description": "Client's full name" },
+        "clientEmail": { "type": "string", "description": "Client's email" },
+        "clientWhatsapp": { "type": "string", "description": "Client's WhatsApp contact" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Time the lead was submitted" },
+        "status": { "type": "string", "description": "Current status of order" }
+      },
+      "required": ["targetName", "relationship", "qualities", "unforgettableMoments", "occasion", "genre", "voiceType", "planId", "clientName", "clientEmail", "clientWhatsapp"]
+    }
+  },
+  "firestore": {
+    "/leads/{leadId}": {
+      "schema": "lead",
+      "description": "Collection where customization orders and leads are saved"
+    }
+  }
+}

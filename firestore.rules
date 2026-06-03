@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Lead rules
+    match /leads/{leadId} {
+      allow create: if isSignedIn() 
+                    && isValidId(leadId) 
+                    && isValidLead(request.resource.data)
+                    && request.resource.data.userId == request.auth.uid;
+      
+      allow read, update: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        isAdmin()
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isValidLead(data) {
+      return data.keys().hasAll([
+        'targetName', 'relationship', 'qualities', 'unforgettableMoments', 
+        'occasion', 'genre', 'voiceType', 'planId', 'clientName', 
+        'clientEmail', 'clientWhatsapp', 'createdAt', 'status', 'userId'
+      ]) 
+      && data.keys().size() <= 18
+      && data.targetName is string && data.targetName.size() <= 100
+      && data.relationship is string && data.relationship.size() <= 100
+      && data.qualities is string && data.qualities.size() <= 1000
+      && data.unforgettableMoments is string && data.unforgettableMoments.size() <= 1000
+      && data.occasion is string && data.occasion.size() <= 100
+      && data.genre is string && data.genre.size() <= 100
+      && data.voiceType is string && data.voiceType.size() <= 100
+      && data.planId is string && (data.planId == 'basico' || data.planId == 'flash')
+      && data.clientName is string && data.clientName.size() <= 100
+      && data.clientEmail is string && data.clientEmail.size() <= 150
+      && data.clientWhatsapp is string && data.clientWhatsapp.size() <= 50
+      && data.status is string && (data.status == 'pending' || data.status == 'paid' || data.status == 'completed')
+      && data.userId == request.auth.uid
+      && data.createdAt is timestamp;
+    }
+  }
+}

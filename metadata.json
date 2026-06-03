@@ -1,0 +1,6 @@
+{
+  "name": "Melodias de Amor",
+  "description": "Crie músicas personalizadas e inesquecíveis para quem você ama por apenas R$ 29,90. Um presente único com letra artística e produção musical.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
